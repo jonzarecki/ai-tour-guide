@@ -8,6 +8,8 @@ from dotenv import load_dotenv
 from streamlit_bokeh_events import streamlit_bokeh_events
 from streamlit_js_eval import get_geolocation
 
+from PIL import Image  # noqa
+
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))  # noqa
 from common.google_maps.gmaps_place import extract_places_in_area  # noqa
 
@@ -44,7 +46,8 @@ def generate_prompt(lat, lon):
 
 
 def main() -> None:
-    st.cache_data.clear()
+    image = Image.open(os.path.join(os.path.dirname(__file__), "chatbot.png"))
+    st.set_page_config(page_title="AI Tour Guide", page_icon=image)
     st.title("AI Tour Guide Prompt Generator!")
     st.write("Click the button below to proceed:")
     # lat, lon = 41.905965, 12.482790  # spaish steps
