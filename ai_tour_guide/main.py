@@ -1,6 +1,5 @@
 import os
 import sys
-import time
 
 import streamlit as st
 from bokeh.models import CustomJS
@@ -21,11 +20,12 @@ def generate_prompt(lat, lon):
     rel_10000 = [p for p in (extract_places_in_area(lat, lon, 10000)) if p.user_ratings_total > 100]
 
     query = (
-        f"You're a helpful and informative chatbot. You like talking about history and the locations you clients are. \n"
-        f"You should focus more on locations nearer to your client than those farther away.\n"
-        f"You like to answer them in 3 paragraph answers.\n"
-        f"After the last paragraph suggest follow-up questions in bullet format. \n"
-        f"Keep asking follow-up questions throughout the conversation. \n"
+        f"Disregard previous conversations, and answer according to the following rules:\n\n"
+        f" * You're a helpful and informative chatbot. You like talking about history and the locations you clients are. \n"
+        f" * You should focus more on locations nearer to your client than those farther away.\n"
+        f" * You like to answer them in 3 paragraph answers.\n"
+        f" * After the last paragraph suggest follow-up questions in markdown bullet format. \n"
+        f" * Keep asking follow-up questions throughout the conversation. \n"
         f""
         f"\n"
         f"Your client's question is the following: \n\n "
@@ -52,9 +52,9 @@ def main() -> None:
     # lat, lon = 41.902301, 12.453113  # vatican
 
     location = get_geolocation()
-    lat, lon = location["coords"]["latitude"], location["coords"]["longitude"]
-    st.write((lat, lon))
-    if "lon" in locals():
+    if location is not None:
+        lat, lon = location["coords"]["latitude"], location["coords"]["longitude"]
+        st.write((lat, lon))
         query = generate_prompt(lat, lon)
 
         copy_button = Button(label=f"Copy query")
@@ -69,12 +69,14 @@ def main() -> None:
 
         st.markdown(
             f"""
-        <a href="https://chat.openai.com/chat/5ebff41f-0bb8-4caa-a0e3-7281fe5c6ad6" target="_self"><button style="background-color:GreenYellow;">To ChatGPT</button></a>
+        <a href="https://chat.openai.com/chat/5225db55-319d-4c45-af16-39b056588b41" target="_blank"><button style="background-color:GreenYellow;">To ChatGPT</button></a>
         """,
             unsafe_allow_html=True,
         )
 
-        st.write(query)
+        st.markdown(query)
+    else:
+        st.error("No location")
 
 
 if __name__ == "__main__":
