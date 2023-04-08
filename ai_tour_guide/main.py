@@ -53,7 +53,7 @@ def main() -> None:
 
     location = get_geolocation()
     lat, lon = location["coords"]["latitude"], location["coords"]["longitude"]
-    # st.write((lat, lon))
+    st.write((lat, lon))
     if "lon" in locals():
         query = generate_prompt(lat, lon)
 
