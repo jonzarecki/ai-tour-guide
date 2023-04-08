@@ -13,7 +13,7 @@ RUN apt-get update && apt-get install -y \
       nano vim \
       openssh-server
 
-COPY environment.yml /tmp/environment.yml
+COPY old_ /tmp/environment.yml
 ENV PATH /opt/conda/bin:$PATH
 ENV CONDA_AUTO_UPDATE_CONDA=false
 
