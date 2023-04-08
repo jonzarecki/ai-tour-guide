@@ -2,29 +2,40 @@ from typing import Dict
 
 import requests
 
-filters = ["road", "footway", "path",
-           'highway', 'state_district', 'ISO3166-2-lvl4',
-           'postcode', 'country_code', 'state',
-           'county', 'ISO3166-2-lvl6', 'suburb', 'quarter']
+filters = [
+    "road",
+    "footway",
+    "path",
+    "highway",
+    "state_district",
+    "ISO3166-2-lvl4",
+    "postcode",
+    "country_code",
+    "state",
+    "county",
+    "ISO3166-2-lvl6",
+    "suburb",
+    "quarter",
+]
 
 
 class OSMLocation:
     def __init__(self, nominatim_response: Dict):
-        self.place_id = nominatim_response['place_id']
-        self.osm_id = nominatim_response['osm_id']
-        self.localname = nominatim_response['localname']
+        self.place_id = nominatim_response["place_id"]
+        self.osm_id = nominatim_response["osm_id"]
+        self.localname = nominatim_response["localname"]
         # self.name = nominatim_response['names'].get('name', None)
-        self.importance = nominatim_response['importance']
-        self.calculated_importance = nominatim_response['calculated_importance']
-        self.rank_address = nominatim_response['rank_address']
-        self.rank_search = nominatim_response['rank_search']
-        self.address = nominatim_response['address']
-        for address in nominatim_response['address']:
-            if address.get('place_type') == 'city':
-                self.city = address['localname']
-            elif address.get('type') == 'country':
-                self.country = address['localname']
-        self.lon, self.lat = nominatim_response['centroid']['coordinates']
+        self.importance = nominatim_response["importance"]
+        self.calculated_importance = nominatim_response["calculated_importance"]
+        self.rank_address = nominatim_response["rank_address"]
+        self.rank_search = nominatim_response["rank_search"]
+        self.address = nominatim_response["address"]
+        for address in nominatim_response["address"]:
+            if address.get("place_type") == "city":
+                self.city = address["localname"]
+            elif address.get("type") == "country":
+                self.country = address["localname"]
+        self.lon, self.lat = nominatim_response["centroid"]["coordinates"]
 
     def __repr__(self):
         return f"OSMLocation({self.lat}, {self.lon}, name={self.localname})"
@@ -36,9 +47,7 @@ class OSMLocation:
     def from_osm_id(cls, osm_id) -> "OSMLocation":
         # Construct the search query URL
         url = f"https://nominatim.openstreetmap.org/details.php?osmtype=N&osmid={osm_id}&addressdetails=1&format=json"
-        headers = {
-            "accept-language": "en-US,en;q=0.9"
-        }
+        headers = {"accept-language": "en-US,en;q=0.9"}
 
         # Send the search query and get the response
         response = requests.get(url, headers=headers)

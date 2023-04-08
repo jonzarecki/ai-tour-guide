@@ -1,10 +1,12 @@
-import streamlit as st
 import requests
+import streamlit as st
 
-def generate_prompt():
+
+def generate_prompt() -> None:
     st.write("You clicked the button!")
 
-def get_locations(lat, lon):
+
+def get_locations(lat, lon) -> list:
     url = f"https://nominatim.openstreetmap.org/reverse?lat={lat}&lon={lon}&format=jsonv2"
     response = requests.get(url)
     data = response.json()
@@ -33,16 +35,18 @@ def get_locations(lat, lon):
 
     return nearby_locations
 
-def main():
+
+def main() -> None:
     st.title("Welcome to my website!")
     st.write("Click the button below to proceed:")
 
     generate_prompt()
-    lat = 32.229210 # Replace with user's latitude
-    lon = 34.916866 # Replace with user's longitude
+    lat = 32.229210  # Replace with user's latitude
+    lon = 34.916866  # Replace with user's longitude
     locations = get_locations(lat, lon)
     st.write(f"Your location: {locations[0]}")
     st.write(f"Nearby locations within 1 km: {locations[1:]}")
+
 
 if __name__ == "__main__":
     main()
