@@ -25,5 +25,6 @@ def extract_places_in_area(lat, lon, radius):
     url = f"https://maps.googleapis.com/maps/api/place/nearbysearch/json?location={lat},{lon}&radius={radius}&key={api_key}"
     response = requests.get(url).json()
     places = [GooglePlace(r) for r in response["results"]]
-    logger.debug(f"in {radius}: {places[:3]}")
+    logger.debug(f"({lat}, {lon}) in {radius}: {places[:3]}")
+    logger.debug(url)
     return places
