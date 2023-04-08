@@ -18,7 +18,7 @@ class GooglePlace:
         self.types = result.get("types", [])
 
     def __str__(self):
-        return f"{self.name} in {self.addr} is of type ({', '.join(t.replace('_', ' ') for t in self.types)})"  # with {self.total_user_ratings} ratings"
+        return f"{self.name} in {self.addr} of type ({', '.join(t.replace('_', ' ') for t in self.types)})"  # with {self.total_user_ratings} ratings"
 
 
 def extract_places_in_area(lat, lon, radius):
