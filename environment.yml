@@ -1,0 +1,16 @@
+name: ai_tour_guide
+channels:
+  - conda-forge
+  - defaults
+
+dependencies:
+  - python=3.10
+  - pip
+
+  - pip:
+    - loguru
+    - streamlit
+    - mysql-connector-python
+    - bokeh==2.4.3
+    - streamlit_bokeh_events
+    - python-dotenv
