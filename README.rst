@@ -1,10 +1,6 @@
 AI Tour Guide
 =============
 
-|PyPI| |Status| |Python Version| |License|
-
-|Read the Docs| |Tests| |Codecov|
-
 |pre-commit| |Black|
 
 .. |PyPI| image:: https://img.shields.io/pypi/v/ai-tour-guide.svg
@@ -39,7 +35,10 @@ AI Tour Guide
 Features
 --------
 
-* TODO
+* Streamlit website (deployed)
+* Sees current location
+* Makes a query using locations from Google's Places API.
+* Enables fast redirect to ChatGPT from the site
 
 
 Issues
