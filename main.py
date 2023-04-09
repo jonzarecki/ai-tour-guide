@@ -17,33 +17,32 @@ load_dotenv()
 
 
 def generate_prompt(lat, lon):
+    """Generates a prompt for the chatbot."""
     all_500 = extract_places_in_area(lat, lon, 500)
-    rel_500 = [p for p in all_500 if p.user_ratings_total > 30]
-    rel_1000 = [p for p in (extract_places_in_area(lat, lon, 1000)) if p.user_ratings_total > 50]
-    rel_10000 = [p for p in (extract_places_in_area(lat, lon, 10000)) if p.user_ratings_total > 100]
+    rel_500 = [p for p in all_500 if p.user_ratings_total > 50]
+    rel_1000 = [p for p in (extract_places_in_area(lat, lon, 1000)) if p.user_ratings_total > 100]
+    rel_10000 = [p for p in (extract_places_in_area(lat, lon, 10000)) if p.user_ratings_total > 500]
 
     query = (
-        f"Disregard previous conversations, and answer according to the following rules:\n\n"
-        f" * You're a helpful and informative chatbot. You like talking about history and the locations you clients are. \n"
+        f"Disregard previous conversations and text, and answer according to the following rules:\n\n"
+        f" * You're a helpful and informative tour guide. You like talking about history and give recommendation. \n"  # noqa
         f" * You should focus more on locations nearer to your client than those farther away.\n"
-        f" * You like to answer them in 3 paragraph answers.\n"
-        f" * After the last paragraph suggest follow-up questions in markdown bullet format. \n"
-        f" * Keep asking follow-up questions throughout the conversation. "
-        f"The questions should not include restaurant/cafe recommendations or require knowledge about the current "
-        f"time.\n"
+        f" * You answer them in 3 paragraph answers.\n"
+        f" * After every answer always write follow-up questions in markdown bullet format. \n"
+        f"The questions should not include restaurant/cafe recommendations or require knowledge the chatbot doesn't have\n"  # noqa
         f""
         f"\n"
         f"Your client's question is the following: \n\n "
         + (f"I'm currently near {all_500[0]}" if len(all_500) > 0 else "")
         + (f"and {rel_500[0]}" if len(rel_500) > 0 else "")
         + (
-            f". \n" f"I'm also near {' and '.join(str(p) for p in rel_500)} but they are not as important. \n\n"
+            f". \n" f"Also in the area there are {' and '.join(str(p) for p in rel_500)}. \n\n"
             if len(rel_500) > 1
             else ""
         )
         + (f"In 1 km vicinity there are {' and '.join(str(p) for p in rel_1000)}.\n\n" if len(rel_1000) > 0 else "")
         + (f"In 10 km vicinity there are {' and '.join(str(p) for p in rel_10000)}.\n\n" if len(rel_1000) > 0 else "")
-        + f"Can you tell me more about where I am? "
+        + f"Can you tell me more about where I am?"
     )
 
     return query
@@ -53,7 +52,7 @@ def main() -> None:
     image = Image.open(os.path.join(os.path.dirname(__file__), "chatbot.png"))
     st.set_page_config(page_title="AI Tour Guide", page_icon=image)
     st.title("AI Tour Guide Prompt Generator!")
-    st.write("Click the below to copy your query to the chatbot, " "the paste the query into ChatGPT:")
+    st.write("Click the below to copy your query to the chatbot, then paste the query into ChatGPT:")
     # lat, lon = 41.905965, 12.482790  # spaish steps
     # lat, lon = 32.228513, 34.916937  # mishmeret
     # lat, lon = 41.902301, 12.453113  # vatican
@@ -65,7 +64,7 @@ def main() -> None:
         query = generate_prompt(lat, lon)
 
         copy_button = Button(label=f"Copy query")
-        copy_button.js_event_callbacks = {}  # for it to refresh
+        copy_button.js_event_callbacks = {}  # for it to refresh    clipboardData.setData('text/plain', 'foo')
         copy_button.js_on_event(
             "button_click", CustomJS(args=dict(), code=f"""navigator.clipboard.writeText("{repr(query)[1:-1]}");""")
         )
