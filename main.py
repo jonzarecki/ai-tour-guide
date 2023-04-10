@@ -18,32 +18,39 @@ load_dotenv()
 
 def generate_prompt(lat, lon):
     """Generates a prompt for the chatbot."""
+    sort_by_rating = lambda l: sorted(l, key=lambda p: p.user_ratings_total, reverse=True)
     all_500 = extract_places_in_area(lat, lon, 500)
-    rel_500 = [p for p in all_500 if p.user_ratings_total > 50]
-    rel_1000 = [p for p in (extract_places_in_area(lat, lon, 1000)) if p.user_ratings_total > 100]
-    rel_10000 = [p for p in (extract_places_in_area(lat, lon, 10000)) if p.user_ratings_total > 500]
+    rel_500 = sort_by_rating(p for p in all_500 if p.user_ratings_total > 50)
+    all_500 = sort_by_rating(all_500.difference(rel_500))
+
+    rel_1000 = {p for p in (extract_places_in_area(lat, lon, 1000)) if p.user_ratings_total > 100}
+    rel_1000 = sort_by_rating(rel_1000.difference(rel_500))
+
+    rel_5000 = {p for p in (extract_places_in_area(lat, lon, 5000)) if p.user_ratings_total > 200}
+    rel_5000 = sort_by_rating(rel_5000.difference(rel_500).difference(rel_1000))
 
     query = (
         f"Disregard previous conversations and text, and answer according to the following rules:\n\n"
         f" * You're a helpful and informative tour guide. You like talking about history and give recommendation. \n"  # noqa
         f" * You should focus more on locations nearer to your client than those farther away.\n"
         f" * You answer them in 3 paragraph answers.\n"
-        f" * After every answer always write follow-up questions in markdown bullet format. \n"
-        f"The questions should not include restaurant/cafe recommendations or require knowledge the chatbot doesn't have\n"  # noqa
-        f""
+        f" * After every answer always write follow-up questions in markdown bullet format. "
+        f"The questions should not include restaurant/cafe recommendations or require knowledge the chatbot doesn't have.\n"  # noqa
         f"\n"
         f"Your client's question is the following: \n\n "
-        + (f"I'm currently near {all_500[0]}" if len(all_500) > 0 else "")
-        + (f"and {rel_500[0]}" if len(rel_500) > 0 else "")
+        f"I'm currently near "
+        # + (f"{all_500[0]}" if len(all_500) > 0 else "")
+        + (f"{rel_500[0]}" if len(rel_500) > 0 else "")
         + (
-            f". \n" f"Also in the area there are {' and '.join(str(p) for p in rel_500)}. \n\n"
+            f". \n" f"Also in the area there are {' and '.join(str(p) for p in rel_500[1:])}. \n\n"
             if len(rel_500) > 1
-            else ""
+            else ".\n\n"
         )
         + (f"In 1 km vicinity there are {' and '.join(str(p) for p in rel_1000)}.\n\n" if len(rel_1000) > 0 else "")
-        + (f"In 10 km vicinity there are {' and '.join(str(p) for p in rel_10000)}.\n\n" if len(rel_1000) > 0 else "")
+        + (f"In 5 km vicinity there are {' and '.join(str(p) for p in rel_5000)}.\n\n" if len(rel_5000) > 0 else "")
         + f"Can you tell me more about where I am?"
     )
+    # st.write(rel_5000)
 
     return query
 
@@ -53,7 +60,7 @@ def main() -> None:
     st.set_page_config(page_title="AI Tour Guide", page_icon=image)
     st.title("AI Tour Guide Prompt Generator!")
     st.write("Click the below to copy your query to the chatbot, then paste the query into ChatGPT:")
-    # lat, lon = 41.905965, 12.482790  # spaish steps
+    # lat, lon = 41.905965, 12.482790  # spanish steps
     # lat, lon = 32.228513, 34.916937  # mishmeret
     # lat, lon = 41.902301, 12.453113  # vatican
 
