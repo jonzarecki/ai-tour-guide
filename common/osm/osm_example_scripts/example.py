@@ -1,7 +1,7 @@
 import overpy
 
-from common.nominatim_importance.importance_cache import importance_cache
-from common.osm_example_scripts.osm_location import OSMLocation
+from common.osm.nominatim_importance.importance_cache import importance_cache
+from common.osm.osm_example_scripts.osm_location import OSMLocation
 
 # Replace <latitude> and <longitude> with the coordinates you want to search around
 lat = 41.905965
