@@ -26,8 +26,6 @@ def generate_prompt(lat, lon):
     rel_1000 = {p for p in (extract_places_in_area(lat, lon, 1000)) if p.user_ratings_total > 100}
     rel_1000 = sort_by_rating(rel_1000.difference(rel_500))
 
-    st.write(str(rel_1000))
-    st.write(str(rel_500))
     # rel_5000 = {p for p in (extract_places_in_area(lat, lon, 5000)) if p.user_ratings_total > 200}
     # rel_5000 = sort_by_rating(rel_5000.difference(rel_500).difference(rel_1000))
     all_locs = rel_500 + rel_1000 + all_500
