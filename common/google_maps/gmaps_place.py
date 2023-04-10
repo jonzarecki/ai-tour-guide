@@ -10,33 +10,28 @@ api_key = os.getenv("api_key")
 logger.debug(f"API key - {api_key}")
 
 good_place_types = [
-    "airport",
-    "amusement_park",
+    # "airport",
+    # "amusement_park",
     "aquarium",
     "art_gallery",
-    "campground",
-    # 'casino', 'cemetery', 'church', 'city_hall',
-    "courthouse",
-    # 'hindu_temple',
+    # "campground",
+    # "courthouse",
     "library",
-    # 'local_government_office',
-    # 'mosque',
     "museum",
     "park",
-    # 'rv_park',
     "shopping_mall",
     "stadium",
-    # 'synagogue',
     "tourist_attraction",
-    "train_station",
+    # "train_station",
     "university",
-    "zoo",
-    "food",
-    "landmark",
-    "natural_feature",
+    # "zoo",
+    # "food",
+    # "landmark",
+    # "natural_feature",
     "place_of_worship",
-    # 'point_of_interest',
-    "town_square",
+    # "town_square",
+    "point_of_interest",
+    "establishment",
 ]
 bad_place_types = [
     "restaurant",
@@ -58,13 +53,28 @@ class GooglePlace:
         self.user_ratings_total = result.get("user_ratings_total", 0)
         self.types = set(result.get("types", [])).difference(["point_of_interest", "establishment"])
 
+    def to_str(self, other: "GooglePlace") -> str:
+        if self.addr == other.addr:
+            return f"{self.name}" + self._str_types()
+        return str(self)
+
     def __str__(self):
-        return f"{self.name} in {self.addr}" + (
-            f" of type ({', '.join(t.replace('_', ' ') for t in self.types)})" if len(self.types) > 0 else ""
-        )  # noqa
+        return f"{self.name} in {self.addr}" + self._str_types()
+
+    def _str_types(self) -> str:
+        return f" of type ({', '.join(t.replace('_', ' ') for t in self.types)})" if len(self.types) > 0 else ""
 
     def __hash__(self):
         return hash(self.name)
+
+    def __eq__(self, other):
+        if isinstance(other, self.__class__):
+            return hash(other) == hash(self)
+        else:
+            return NotImplemented
+
+    def __repr__(self):
+        return self.__str__() + f" ({hash(self)})"
 
 
 def extract_places_in_area(lat, lon, radius, next_page_token=None, place_type=None) -> Set[GooglePlace]:

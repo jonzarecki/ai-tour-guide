@@ -26,28 +26,36 @@ def generate_prompt(lat, lon):
     rel_1000 = {p for p in (extract_places_in_area(lat, lon, 1000)) if p.user_ratings_total > 100}
     rel_1000 = sort_by_rating(rel_1000.difference(rel_500))
 
-    rel_5000 = {p for p in (extract_places_in_area(lat, lon, 5000)) if p.user_ratings_total > 200}
-    rel_5000 = sort_by_rating(rel_5000.difference(rel_500).difference(rel_1000))
+    st.write(str(rel_1000))
+    st.write(str(rel_500))
+    # rel_5000 = {p for p in (extract_places_in_area(lat, lon, 5000)) if p.user_ratings_total > 200}
+    # rel_5000 = sort_by_rating(rel_5000.difference(rel_500).difference(rel_1000))
+    all_locs = rel_500 + rel_1000 + all_500
+    if len(all_locs) == 0:
+        return "I'm sorry, I don't know anything about this area. Please try again later."
 
+    curr_loc = all_locs[0]
     query = (
         f"Disregard previous conversations and text, and answer according to the following rules:\n\n"
         f" * You're a helpful and informative tour guide. You like talking about history and give recommendation. \n"  # noqa
-        f" * You should focus more on locations nearer to your client than those farther away.\n"
+        f" * You should focus more location in the client's immediate vicinity. \n"
         f" * You answer them in 3 paragraph answers.\n"
-        f" * After every answer always write follow-up questions in markdown bullet format. "
-        f"The questions should not include restaurant/cafe recommendations or require knowledge the chatbot doesn't have.\n"  # noqa
+        f" * Keep writing follow-up questions in markdown bullet format throughout the conversation.\n"
+        f"The questions should not include restaurant/cafe or require knowledge that you don't have.\n"  # noqa
         f"\n"
         f"Your client's question is the following: \n\n "
-        f"I'm currently near "
-        # + (f"{all_500[0]}" if len(all_500) > 0 else "")
-        + (f"{rel_500[0]}" if len(rel_500) > 0 else "")
+        f"I'm currently near {curr_loc}. \n"
         + (
-            f". \n" f"Also in the area there are {' and '.join(str(p) for p in rel_500[1:])}. \n\n"
+            f"Also in the area there are {' and '.join(p.to_str(curr_loc) for p in rel_500[1:])}. \n\n"
             if len(rel_500) > 1
             else ".\n\n"
         )
-        + (f"In 1 km vicinity there are {' and '.join(str(p) for p in rel_1000)}.\n\n" if len(rel_1000) > 0 else "")
-        + (f"In 5 km vicinity there are {' and '.join(str(p) for p in rel_5000)}.\n\n" if len(rel_5000) > 0 else "")
+        + (
+            f"In 1 km vicinity there are {' and '.join(p.to_str(curr_loc) for p in rel_1000)}.\n\n"
+            if len(rel_1000) > 0
+            else ""
+        )
+        # + (f"In 5 km vicinity there are {' and '.join(str(p) for p in rel_5000)}.\n\n" if len(rel_5000) > 0 else "")
         + f"Can you tell me more about where I am?"
     )
     # st.write(rel_5000)
