@@ -34,15 +34,9 @@ def generate_prompt(lat, lon):
 
     curr_loc = all_locs[0]
     query = (
-        f"Disregard previous conversations and text, and answer according to the following rules:\n\n"
-        f" * You're a helpful and informative tour guide. You like talking about history and give recommendation. \n"  # noqa
-        f" * You should focus more location in the client's immediate vicinity. \n"
-        f" * You answer them in 3 paragraph answers.\n"
-        f" * Keep writing follow-up questions in markdown bullet format throughout the conversation.\n"
-        f"The questions should not include restaurant/cafe or require knowledge that you don't have.\n"  # noqa
-        f"\n"
-        f"Your client's question is the following: \n\n "
-        f"I'm currently near {curr_loc}. \n"
+        f"You're a helpful and informative tour guide. You like talking about history and culture. \n"
+        f"Your client's location can be describe by the following paragraphs: \n\n "
+        f"```I'm currently near {curr_loc}. \n"
         + (
             f"Also in the area there are {' and '.join(p.to_str(curr_loc) for p in rel_500[1:])}. \n\n"
             if len(rel_500) > 1
@@ -54,7 +48,14 @@ def generate_prompt(lat, lon):
             else ""
         )
         # + (f"In 5 km vicinity there are {' and '.join(str(p) for p in rel_5000)}.\n\n" if len(rel_5000) > 0 else "")
-        + f"Can you tell me more about where I am?"
+        + f"``` \n\n"
+        f"Keeping the client location in mind, answer from now on according to the following rules:\n\n"
+        f" * You should focus more location in the client's immediate vicinity. \n"
+        f" * You answer them in 3 paragraph answers.\n"
+        f" * After each prompt write follow-up questions in markdown bullet. "
+        f"The questions should not include restaurant/cafe or require knowledge that you don't have.\n"
+        f" * Keep writing follow-up questions in markdown bullet format throughout the conversation. \n"
+        f' * After the first prompt write "How can I help you today?"'
     )
     # st.write(rel_5000)
 
