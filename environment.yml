@@ -8,9 +8,9 @@ dependencies:
   - pip
 
   - pip:
-    - loguru
-    - streamlit
-    - mysql-connector-python
-    - bokeh==2.4.3
-    - streamlit_bokeh_events
-    - python-dotenv
+      - loguru
+      - streamlit
+      - mysql-connector-python
+      - bokeh==2.4.3
+      - streamlit_bokeh_events
+      - python-dotenv
