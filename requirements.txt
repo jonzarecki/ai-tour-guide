@@ -1,4 +1,4 @@
-bokeh==2.4.3
+bokeh=2.4.3
 # python 3.9-3.10
 loguru
 mysql-connector-python
